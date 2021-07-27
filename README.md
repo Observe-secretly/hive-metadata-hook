@@ -53,7 +53,8 @@ impalaPort = 21050
 ``` shell
 scp target/hive-metadata-hook.jar root@host:/usr/hdp/{HDP-VERSION}/hive/lib
 ```
-- 4、重启Hive。问题跟踪与定位，可观察HiveServer上的`/var/log/hive/hiveserver2.log`（默认位置）日志
+- 4、修改Hive配置.在配置项`hive.exec.post.hooks`中追加`cn.tsign.MetadataOpMonitorHook`。多个Hook使用英文逗号隔开
+- 5、重启Hive。问题跟踪与定位，可观察HiveServer上的`/var/log/hive/hiveserver2.log`（默认位置）日志
 
 ## 脚本部署
 ```
