@@ -4,6 +4,7 @@
 ##运行方式 nohup python -u impalaMetadataAutoRefreshForCustomHook.py > run.log &
 
 import json
+import time
 from impala.dbapi import connect
 from pykafka import KafkaClient
 import sys
@@ -39,16 +40,18 @@ def impala_query(conn, sql):
 
 
 def impala_exec(conn, sql):
-    if is_debug:
-        print('\033[31m EXEC: \033[0m')
-        print('\033[31m' + sql + '\033[0m')
-        print(' ')
-    cur = conn.cursor()
-    cur.execute(sql)
+    try:
+        if is_debug:
+            print('\033[31m EXEC: \033[0m')
+            print('\033[31m' + sql + '\033[0m')
+            print(' ')
+        cur = conn.cursor()
+        cur.execute(sql)
+    except Exception as e:
+        print e
 
 def handel(hookContent):
     try:
-
         #获取impala连接
         conn = conn = get_conn(impalaHost, impalaPort)
         #print hookContent
@@ -58,13 +61,18 @@ def handel(hookContent):
         tables = jsonObj['tables']
         ##循环获取待刷新表,逐个刷新（一般只会有一个表）
         for table in tables:
+            if jsonObj['operationName'] == 'QUERY' and  hookContent.lower().index('overwrite') <= 0:
+                return
+
+            print '['+time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())) + ']' + jsonObj['operationName']+'-->invalidate metadata ' + table + ';'
             impala_exec(conn, 'invalidate metadata ' + table + ';')
             impala_exec(conn, 'select * from ' + table + ' limit 1;')
-            print jsonObj['operationName']+'-->invalidate metadata ' + table + ';'
 
-        conn.close()
+
     except Exception as e:
         print e
+    finally :
+        conn.close()
 
 if __name__ == '__main__':
     # 消费者

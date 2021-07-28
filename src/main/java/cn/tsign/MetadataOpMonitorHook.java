@@ -45,11 +45,17 @@ public class MetadataOpMonitorHook implements ExecuteWithHookContext {
         OPERATION_NAMES.add(HiveOperation.ALTERTABLE_RENAMECOL.getOperationName());
         OPERATION_NAMES.add(HiveOperation.ALTERTABLE_REPLACECOLS.getOperationName());
         OPERATION_NAMES.add(HiveOperation.ALTERTABLE_ADDPARTS.getOperationName());
+        OPERATION_NAMES.add(HiveOperation.ALTERDATABASE_LOCATION.getOperationName());
         OPERATION_NAMES.add(HiveOperation.CREATEDATABASE.getOperationName());
         OPERATION_NAMES.add(HiveOperation.DROPDATABASE.getOperationName());
         OPERATION_NAMES.add(HiveOperation.DROPTABLE.getOperationName());
         OPERATION_NAMES.add(HiveOperation.LOAD.getOperationName());
         OPERATION_NAMES.add(HiveOperation.REPLLOAD.getOperationName());
+        OPERATION_NAMES.add(HiveOperation.CREATETABLE_AS_SELECT.getOperationName());
+        OPERATION_NAMES.add(HiveOperation.QUERY.getOperationName());
+        OPERATION_NAMES.add(HiveOperation.ALTERVIEW_RENAME.getOperationName());
+        OPERATION_NAMES.add(HiveOperation.DROPVIEW.getOperationName());
+
     }
 
     @Override
