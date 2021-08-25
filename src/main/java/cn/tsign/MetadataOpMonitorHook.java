@@ -35,6 +35,7 @@ public class MetadataOpMonitorHook implements ExecuteWithHookContext {
     static {
         notificationInterface = NotificationProvider.get();
 
+        OPERATION_NAMES.add(HiveOperation.QUERY.getOperationName());
         OPERATION_NAMES.add(HiveOperation.CREATETABLE.getOperationName());
         OPERATION_NAMES.add(HiveOperation.ALTERDATABASE.getOperationName());
         OPERATION_NAMES.add(HiveOperation.ALTERDATABASE_OWNER.getOperationName());
@@ -70,6 +71,10 @@ public class MetadataOpMonitorHook implements ExecuteWithHookContext {
 
         if (OPERATION_NAMES.contains(operationName)
                     && !plan.isExplain()) {
+            //处理insert into的情况
+            if(operationName.equalsIgnoreCase(HiveOperation.QUERY.getOperationName())&&plan.getQueryString().indexOf("insert")==-1){
+                return ;
+            }
 
             NotifyMessage message  = new NotifyMessage();
             message.setExecutedQuery(plan.getQueryString());
