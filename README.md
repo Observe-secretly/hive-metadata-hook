@@ -1,5 +1,5 @@
 # 背景
-之前上传过一段借助Atlas Hook的实现Impala元数据刷新的Python脚本([传送门](https://github.com/Observe-secretly/AutoRefreshImpala)).最近发现它无法监听到某些Hive操作，比如增加分区操作。那么这段代码将演示如何自定义一个Hive Hook把监听的数据发送到Kafka，并通过编写的Python脚本刷新Impala元数据
+之前上传过一段借助Atlas Hook的实现Impala元数据刷新的Python脚本([传送门](https://github.com/Observe-secretly/AutoRefreshImpala)).最近发现它无法监听Hive某些操作，比如增加分区操作。那么这段代码将演示如何自定义一个Hive Hook把监听的数据发送到Kafka，并通过编写的Python脚本刷新Impala元数据
 
 # 功能
 - 订阅Hive元数据变动
