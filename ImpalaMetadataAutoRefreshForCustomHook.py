@@ -53,7 +53,7 @@ def impala_exec(conn, sql):
 def handel(hookContent):
     try:
         #获取impala连接
-        conn = conn = get_conn(impalaHost, impalaPort)
+        conn = get_conn(impalaHost, impalaPort)
         #print hookContent
         #转换成json对象
         jsonObj = json.loads(hookContent)
@@ -61,18 +61,16 @@ def handel(hookContent):
         tables = jsonObj['tables']
         ##循环获取待刷新表,逐个刷新（一般只会有一个表）
         for table in tables:
-            if jsonObj['operationName'] == 'QUERY' and  hookContent.lower().index('overwrite') <= 0:
-                return
+            if jsonObj['operationName'] == 'QUERY' and  jsonObj['executedQuery'].lower().find('insert') == -1:
+                return;
 
             print '['+time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())) + ']' + jsonObj['operationName']+'-->invalidate metadata ' + table + ';'
             impala_exec(conn, 'invalidate metadata ' + table + ';')
             impala_exec(conn, 'select * from ' + table + ' limit 1;')
-
+        conn.close()
 
     except Exception as e:
         print e
-    finally :
-        conn.close()
 
 if __name__ == '__main__':
     # 消费者
