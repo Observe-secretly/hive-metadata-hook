@@ -1,6 +1,7 @@
 package cn.tsign;
 
 import cn.tsign.entity.NotifyMessage;
+import cn.tsign.exceptions.NotificationException;
 import cn.tsign.notification.NotificationInterface;
 import cn.tsign.notification.NotificationProvider;
 import com.alibaba.fastjson.JSON;
@@ -71,10 +72,6 @@ public class MetadataOpMonitorHook implements ExecuteWithHookContext {
 
         if (OPERATION_NAMES.contains(operationName)
                     && !plan.isExplain()) {
-            //处理insert into的情况
-            if(operationName.equalsIgnoreCase(HiveOperation.QUERY.getOperationName())&&plan.getQueryString().indexOf("insert")==-1){
-                return ;
-            }
 
             NotifyMessage message  = new NotifyMessage();
             message.setExecutedQuery(plan.getQueryString());
@@ -98,7 +95,11 @@ public class MetadataOpMonitorHook implements ExecuteWithHookContext {
 
             }
 
-            notificationInterface.send(JSON.toJSONString(message));
+            try {
+                notificationInterface.send(JSON.toJSONString(message));
+            }catch (NotificationException e ){
+                e.printStackTrace();
+            }
 
         } else {
             logWithHeader("Non-monitored Operation, ignoring hook");
